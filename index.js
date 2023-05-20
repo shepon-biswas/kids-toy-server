@@ -27,6 +27,10 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const toysCollection = client.db("toysDB").collection("toys");
+    // create index on for data search
+    const indexKeys = {name: 1, subCategory: 1};
+    const indexOptions = { name: "nameCategory" };
+    const result = await toysCollection.createIndex(indexKeys, indexOptions);
 
     app.post("/addtoy", async (req, res) => {
       const newToy = req.body;
@@ -53,6 +57,23 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
+    // Search a toy by name & category
+    app.get('/searchToy/:text', async(req, res) =>{
+      const searchQuery = req.params.text;
+
+      const searchResult = await toysCollection.find({
+        $or:[
+          {name : {$regex: searchQuery, $options: "i"}},
+          {subCategory : {$regex: searchQuery, $options: "i"}}
+        ]
+      }).toArray();
+
+      res.send(searchResult);
+    })
+
+
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
