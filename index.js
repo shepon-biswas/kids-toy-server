@@ -27,7 +27,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const toysCollection = client.db("toysDB").collection("toys");
-    // create index on for data search
+    // create index on for data searching option
     const indexKeys = {name: 1, subCategory: 1};
     const indexOptions = { name: "nameCategory" };
     const result = await toysCollection.createIndex(indexKeys, indexOptions);
@@ -71,7 +71,15 @@ async function run() {
       res.send(searchResult);
     })
 
-
+    // Get data sub-category wise
+    app.get('/alltoys/:subCategory', async(req, res) =>{
+      const subCategoryQuery = req.params.subCategory;
+      // console.log(subCategoryQuery)
+      if(subCategoryQuery == "math" || subCategoryQuery == "science" || subCategoryQuery == "intelligence"){
+        const result = await toysCollection.find({subCategory : subCategoryQuery}).toArray();
+        res.send(result);
+      }
+    })
 
 
     // Send a ping to confirm a successful connection
