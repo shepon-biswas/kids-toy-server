@@ -47,6 +47,12 @@ async function run() {
       const result = await toysCollection.deleteOne(query);
       res.send(result);
     })
+    // Get all toys
+    app.get('/alltoys', async(req, res) =>{
+      const cursor = toysCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
