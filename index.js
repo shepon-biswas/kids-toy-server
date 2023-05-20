@@ -57,6 +57,14 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
+    // Get a single toys information
+    app.get('/toydetails/:id', async(req, res) =>{
+      const toyID = req.params.id;
+      const cursor = toysCollection.find({_id : new ObjectId(toyID)});
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
     // Search a toy by name & category
     app.get('/searchToy/:text', async(req, res) =>{
       const searchQuery = req.params.text;
