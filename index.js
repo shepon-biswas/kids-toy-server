@@ -43,6 +43,31 @@ async function run() {
       const result = await toysCollection.find({sellerEmail: req.params.email}).toArray();
       res.send(result);
     })
+    // Update a toy
+    app.get('/toy/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await toysCollection.findOne(query);
+      res.send(result);
+    })
+    app.put('/toy/:id', async(req, res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const options = { upsert:true};
+      const updatedToy = req.body;
+      const toyData = {
+        $set:{
+          name: updatedToy.name,
+          photo: updatedToy.photo,
+          price: updatedToy.price,
+          quantity: updatedToy.quantity,
+          description: updatedToy.description,
+        }
+      }
+      const result = await toysCollection.updateOne(filter, toyData, options);
+      res.send(result);
+
+    })
 
     // Delete a toy
     app.delete('/toy/:id', async(req, res) =>{
@@ -53,7 +78,7 @@ async function run() {
     })
     // Get all toys
     app.get('/alltoys', async(req, res) =>{
-      const cursor = toysCollection.find();
+      const cursor = toysCollection.find().limit(20);
       const result = await cursor.toArray();
       res.send(result);
     })
